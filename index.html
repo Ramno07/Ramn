@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>💌 A Very Important Question...</title>
-<!-- <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Dancing+Script:wght@600&family=Nunito:wght@400;600&display=swap" rel="stylesheet"> -->
 <style>
   :root {
     --rose: #ff2d55;
@@ -77,7 +76,7 @@
   .mini-btn-yes:hover { transform:scale(1.05); }
   .mini-btn-no2 { background:rgba(255,255,255,.07); color:#999; border:1.5px solid rgba(255,255,255,.12); font-size:.85rem; }
 
-  /* PAGE 4 — PICK A MEAL TIME */
+  /* PAGE 4 */
   #page4 { background: radial-gradient(ellipse at 50% 30%, #3a0a1a 0%, var(--dark) 70%); }
   .pick-title { font-family:'Dancing Script',cursive; font-size:clamp(2rem,5vw,3.2rem); color:var(--gold); margin-bottom:8px; }
   .pick-sub { color:#ffb3c6; font-size:.95rem; margin-bottom:35px; font-style:italic; }
@@ -96,7 +95,7 @@
   .meal-card .mc-time { font-size:.78rem; color:var(--gold); letter-spacing:.5px; }
   .meal-card .mc-vibe { font-size:.78rem; color:#c8a0b0; font-style:italic; }
 
-  /* PAGE 5 — PICK A DISH */
+  /* PAGE 5 */
   #page5 { background: radial-gradient(ellipse at 50% 30%, #1a0a3a 0%, var(--dark) 70%); overflow-y:auto; justify-content:flex-start; padding-top:50px; padding-bottom:50px; }
   .dish-title { font-family:'Dancing Script',cursive; font-size:clamp(1.8rem,4vw,2.8rem); color:var(--gold); margin-bottom:4px; }
   .dish-sub { color:#ffb3c6; font-size:.9rem; margin-bottom:30px; font-style:italic; }
@@ -113,7 +112,7 @@
   .dish-card .d-name { font-weight:700; font-size:.92rem; color:#fff; margin-bottom:4px; }
   .dish-card .d-desc { font-size:.76rem; color:#b090a0; }
 
-  /* PAGE 6 — FINAL PLAN */
+  /* PAGE 6 */
   #page6 { background: radial-gradient(ellipse at 40% 20%, #3a0a1a 0%, var(--dark) 70%); overflow-y:auto; justify-content:flex-start; padding-top:50px; padding-bottom:60px; }
   .final-title { font-family:'Dancing Script',cursive; font-size:clamp(2rem,5vw,3rem); color:var(--gold); margin-bottom:4px; }
   .final-sub { color:#ffb3c6; font-size:.9rem; margin-bottom:30px; font-style:italic; }
@@ -130,11 +129,40 @@
   .plan-label { font-size:.72rem; color:var(--gold); letter-spacing:.8px; text-transform:uppercase; margin-bottom:3px; }
   .plan-value { font-family:'Playfair Display',serif; font-size:1rem; color:#fff; margin-bottom:3px; }
   .plan-note { font-size:.78rem; color:#c8a0b0; font-style:italic; }
-  .bonus-box { max-width:480px; width:100%; background:rgba(255,215,0,.05); border:1px solid rgba(255,215,0,.18); border-radius:20px; padding:22px; }
+  .bonus-box { max-width:480px; width:100%; background:rgba(255,215,0,.05); border:1px solid rgba(255,215,0,.18); border-radius:20px; padding:22px; margin-bottom:24px; }
   .bonus-box-title { font-family:'Dancing Script',cursive; font-size:1.5rem; color:var(--gold); margin-bottom:12px; }
   .bonus-list { list-style:none; }
   .bonus-list li { padding:7px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:.88rem; color:#d4b0c0; display:flex; align-items:center; gap:10px; }
   .bonus-list li:last-child { border-bottom:none; }
+  .continue-btn { background:linear-gradient(135deg,var(--rose),#c0004e); color:white; border:none; padding:16px 44px; border-radius:50px; font-family:'Nunito',sans-serif; font-size:1.1rem; font-weight:600; cursor:pointer; box-shadow:0 8px 30px #ff2d5566; transition:all .25s; animation:pulse-btn 2s ease-in-out infinite; }
+  .continue-btn:hover { transform:scale(1.07) translateY(-3px); }
+
+  /* PAGE 7 — SIGN OFF */
+  #page7 { background: radial-gradient(ellipse at 50% 30%, #2a0a20 0%, var(--dark) 70%); }
+  .signoff-title { font-family:'Dancing Script',cursive; font-size:clamp(2rem,5vw,3rem); color:var(--gold); text-shadow:0 0 30px #ffd70055; margin-bottom:6px; }
+  .signoff-sub { color:#ffb3c6; font-size:.95rem; margin-bottom:32px; font-style:italic; }
+  .signoff-form { max-width:420px; width:100%; display:flex; flex-direction:column; gap:16px; }
+  .signoff-field {
+    background:rgba(255,255,255,.06);
+    border:1.5px solid rgba(255,45,85,.25);
+    border-radius:16px; padding:16px 20px;
+    color:#fff; font-family:'Nunito',sans-serif; font-size:1rem;
+    outline:none; transition:border-color .2s, background .2s;
+    resize:none; width:100%;
+  }
+  .signoff-field::placeholder { color:#a07080; }
+  .signoff-field:focus { border-color:var(--rose); background:rgba(255,45,85,.08); }
+  .signoff-send-btn {
+    background:linear-gradient(135deg,var(--rose),#c0004e);
+    color:white; border:none; padding:16px; border-radius:50px;
+    font-family:'Nunito',sans-serif; font-size:1.1rem; font-weight:700;
+    cursor:pointer; box-shadow:0 8px 30px #ff2d5566;
+    transition:all .25s; animation:pulse-btn 2s ease-in-out infinite;
+  }
+  .signoff-send-btn:hover { transform:scale(1.05) translateY(-2px); }
+  .signoff-err { color:#ff6b8a; font-size:.82rem; font-style:italic; height:18px; }
+
+  @keyframes bounceIn { 0%{transform:scale(0) rotate(-10deg);opacity:0} 70%{transform:scale(1.15) rotate(3deg)} 100%{transform:scale(1) rotate(0);opacity:1} }
 
   /* SHARED */
   .open-btn { background:linear-gradient(135deg,var(--rose),#c0004e); color:white; border:none; padding:16px 40px; border-radius:50px; font-family:'Nunito',sans-serif; font-size:1.1rem; font-weight:600; cursor:pointer; box-shadow:0 8px 30px #ff2d5566; transition:all .25s; animation:pulse-btn 2s ease-in-out infinite; }
@@ -235,7 +263,34 @@
     <div class="bonus-box-title">💝 Little Extras</div>
     <ul class="bonus-list" id="bonusList"></ul>
   </div>
+  <button class="continue-btn" onclick="showPage(7)">One last thing... 💌</button>
 </div>
+
+<!-- PAGE 7 — SIGN OFF -->
+<div class="page hidden" id="page7">
+  <div class="signoff-title">Leave me a little something 💕</div>
+  <p class="signoff-sub">So I know it was really you who said yes 🥹</p>
+  <div class="signoff-form">
+    <input
+      class="signoff-field"
+      id="valentineUsername"
+      type="text"
+      placeholder="Your name 🌸"
+      maxlength="40"
+    />
+    <textarea
+      class="signoff-field"
+      id="valentineMessage"
+      placeholder="Write me a little message... 💌"
+      rows="4"
+      maxlength="300"
+    ></textarea>
+    <div class="signoff-err" id="signoffErr"></div>
+    <button class="signoff-send-btn" onclick="submitSignoff()">Send it to my heart 💖</button>
+  </div>
+</div>
+
+
 
 <script>
 // ---- STARS ----
@@ -321,7 +376,7 @@ function showPage(n) {
   document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
   document.getElementById('page'+n).classList.remove('hidden');
   currentPage = n;
-  document.getElementById('backBtn').style.display = n>1 ? 'block' : 'none';
+  document.getElementById('backBtn').style.display = (n > 1 && n < 8) ? 'block' : 'none';
   if (n===2) setTimeout(()=>{ document.getElementById('loveFill').style.width='92%'; },300);
 }
 function goBack() { if(currentPage>1) showPage(currentPage-1); }
@@ -406,6 +461,58 @@ function pickDish(dish) {
 
   spawnConfetti();
   showPage(6);
+}
+
+// ---- SIGN OFF ----
+async function submitSignoff() {
+  const username = document.getElementById('valentineUsername').value.trim();
+  const message = document.getElementById('valentineMessage').value.trim();
+  const errEl = document.getElementById('signoffErr');
+  const btn = document.querySelector('.signoff-send-btn');
+
+  if (!username) { errEl.textContent = 'Please tell me your name 🥺'; return; }
+  if (!message) { errEl.textContent = 'Leave me a little message too! 💌'; return; }
+  errEl.textContent = '';
+
+  const mealLabel = chosenMeal.charAt(0).toUpperCase() + chosenMeal.slice(1);
+
+  btn.textContent = 'Sending... 💌';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('https://formspree.io/f/mbdbozny', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: username,
+        message: message,
+        date_plan: `${mealLabel} — ${chosenDish.name}`,
+      })
+    });
+
+    if (res.ok) {
+      spawnConfetti();
+      spawnHearts();
+      btn.textContent = 'Sent! 💖';
+      setTimeout(() => {
+        document.getElementById('page7').innerHTML = `
+          <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+            <div style="font-size:80px;animation:bounceIn .6s cubic-bezier(.36,.07,.19,.97)">💌</div>
+            <div style="font-family:'Dancing Script',cursive;font-size:clamp(2rem,5vw,3rem);color:var(--gold);">Message sent! 🥰</div>
+            <p style="color:#ffb3c6;font-size:1rem;font-style:italic;max-width:340px;">I've received everything. See you on our date 🌹</p>
+          </div>
+        `;
+      }, 600);
+    } else {
+      errEl.textContent = 'Something went wrong, try again 💔';
+      btn.textContent = 'Send it to my heart 💖';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    errEl.textContent = 'No connection, try again 💔';
+    btn.textContent = 'Send it to my heart 💖';
+    btn.disabled = false;
+  }
 }
 
 // ---- FX ----
