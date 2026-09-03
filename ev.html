@@ -1,0 +1,305 @@
+<html lang="en" class=""><link type="text/css" id="dark-mode" rel="stylesheet" href=""><style type="text/css" id="dark-mode-сustom-style"></style><style type="text/css" id="dark-mode-theme-changer-style"></style><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gagy's Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap');
+
+        :root {
+            --neon-blue: #00f2fe;
+            --neon-pink: #ff00c1;
+            --neon-green: #4ade80;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; touch-action: manipulation; }
+        
+        body {
+            margin: 0; padding: 0;
+            background: #020205;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute; width: 200%; height: 200%;
+            background: radial-gradient(circle at 50% 50%, #0a0a2e 0%, #020205 100%);
+            animation: moveBg 15s linear infinite;
+            z-index: -1;
+        }
+        @keyframes moveBg { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #game-container {
+            position: relative;
+            width: 100%; max-width: 900px;
+            aspect-ratio: 16/9;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        canvas { display: block; width: 100%; height: 100%; }
+
+        .hud {
+            position: absolute; top: 20px; left: 0; width: 100%;
+            display: flex; justify-content: space-around;
+            padding: 0 20px; pointer-events: none; z-index: 5;
+        }
+        .stat-card {
+            background: var(--glass);
+            padding: 5px 20px; border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        .stat-label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-family: 'Orbitron', sans-serif; font-size: 20px; color: var(--neon-blue); display: block; }
+
+        #ui-overlay {
+            position: absolute; inset: 0;
+            background: rgba(2, 2, 5, 0.9);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 20; transition: all 0.5s ease;
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif; font-size: clamp(30px, 6vw, 60px);
+            margin: 0; background: linear-gradient(to right, #fff, var(--neon-blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.3));
+        }
+
+        .btn-start {
+            margin-top: 30px; padding: 15px 50px;
+            font-size: 18px; font-weight: 700; font-family: 'Orbitron', sans-serif;
+            background: transparent; color: white;
+            border: 2px solid var(--neon-blue); border-radius: 8px;
+            cursor: pointer; position: relative; overflow: hidden;
+            transition: 0.3s;
+        }
+        .btn-start:hover {
+            background: var(--neon-blue); color: black;
+            box-shadow: 0 0 30px var(--neon-blue);
+        }
+
+        #active-power {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            font-family: 'Orbitron', sans-serif; font-weight: bold;
+            padding: 10px 30px; border-radius: 50px; display: none;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse { from { opacity: 0.6; transform: translateX(-50%) scale(0.95); } to { opacity: 1; transform: translateX(-50%) scale(1); } }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div class="hud">
+        <div class="stat-card"><span class="stat-label">Score</span><span class="stat-value" id="score">0</span></div>
+        <div class="stat-card"><span class="stat-label">Level</span><span class="stat-value" id="level">1</span></div>
+        <div class="stat-card"><span class="stat-label">High Score</span><span class="stat-value" id="high">0</span></div>
+    </div>
+
+    <div id="active-power">POWER ACTIVE</div>
+
+    <div id="ui-overlay">
+        <h1 id="title">Giddstein</h1>
+        <button class="btn-start" onclick="init()">Again cuz Im a Retard</button>
+    </div>
+
+    <canvas id="gameCanvas" width="900" height="500"></canvas>
+</div>
+
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const highEl = document.getElementById('high');
+    const levelEl = document.getElementById('level');
+    const powerUI = document.getElementById('active-power');
+    const overlay = document.getElementById('ui-overlay');
+
+    canvas.width = 900; canvas.height = 500;
+    const playerImg = new Image();
+    playerImg.src = 'IMAGES/photo_2026-09-03_22-05-36.jpg';
+
+    let player = {
+        x: 100,
+        y: 300,
+        w: 80,
+        h: 100,
+        dy: 0,
+        jumps: 0,
+        powerMode: null,
+        powerTime: 0,
+        frame: 0,
+        frameDelay: 0
+    };
+
+    function drawPlayer() {
+        if (!playerImg.complete || !playerImg.naturalWidth) {
+            ctx.fillStyle = '#00f2fe';
+            ctx.fillRect(player.x, player.y, player.w, player.h);
+            return;
+        }
+
+        player.frameDelay++;
+        if (player.frameDelay > 8) {
+            player.frameDelay = 0;
+            player.frame = (player.frame + 1) % 2;
+        }
+
+        const wobble = player.frame === 0 ? 0 : 2;
+        ctx.save();
+        ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
+        ctx.drawImage(
+            playerImg,
+            -player.w / 2,
+            -player.h / 2 + wobble,
+            player.w,
+            player.h
+        );
+        ctx.restore();
+    }
+
+    let state = { active: false, score: 0, high: localStorage.getItem('jer_ultra_high') || 0, speed: 7, frame: 0, level: 1, baseSpeed: 7 };
+    highEl.innerText = state.high;
+
+    const groundY = canvas.height - 70;
+
+    function updatePlayer() {
+        const gravity = player.powerMode === 'slow' ? 0.55 : 0.8;
+        player.dy += gravity;
+        player.y += player.dy;
+        if (player.y + player.h > groundY) { player.y = groundY - player.h; player.dy = 0; player.jumps = 0; }
+        if (player.powerMode) {
+            player.powerTime--;
+            if (player.powerTime <= 0) player.resetPower();
+        }
+    }
+
+    function resetPower() {
+        player.powerMode = null;
+        player.powerTime = 0;
+        player.w = 80;
+        player.h = 100;
+        state.speed = state.baseSpeed;
+        powerUI.style.display = 'none';
+    }
+    player.resetPower = resetPower;
+
+    let obstacles = [];
+    let pills = [];
+
+    class Obstacle {
+        constructor() {
+            this.type = Math.random() > 0.75 ? 'bird' : 'spike';
+            this.w = 45; this.h = this.type === 'bird' ? 35 : 55 + Math.random() * 50;
+            this.x = canvas.width;
+            this.y = this.type === 'bird' ? groundY - 150 : groundY - this.h;
+            this.glow = this.type === 'bird' ? '#facc15' : '#ff00c1';
+        }
+        update() { this.x -= state.speed; }
+        draw() {
+            ctx.save();
+            ctx.fillStyle = this.glow;
+            ctx.shadowBlur = 15; ctx.shadowColor = this.glow;
+            ctx.fillRect(this.x, this.y, this.w, this.h);
+            ctx.strokeStyle = "#fff"; ctx.lineWidth = 2;
+            ctx.strokeRect(this.x + 5, this.y + 5, this.w - 10, this.h - 10);
+            ctx.restore();
+        }
+    }
+
+    class Pill {
+        constructor() {
+            const types = [{t:'giant', c:'#ff00c1'}, {t:'slow', c:'#4ade80'}, {t:'boost', c:'#facc15'}];
+            let s = types[Math.floor(Math.random() * types.length)];
+            this.type = s.t; this.color = s.c;
+            this.x = canvas.width; this.y = groundY - 140 - Math.random() * 60;
+        }
+        update() { this.x -= state.speed; }
+        draw() {
+            ctx.save();
+            ctx.fillStyle = this.color; ctx.shadowBlur = 20; ctx.shadowColor = this.color;
+            ctx.beginPath(); ctx.ellipse(this.x, this.y, 20, 10, Math.PI/4, 0, Math.PI*2); ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    function init() {
+        state.active = true; state.score = 0; state.baseSpeed = 7.5; state.speed = 7.5; state.frame = 0; state.level = 1;
+        player.x = 100; player.y = groundY - 100; player.dy = 0; player.jumps = 0; player.w = 80; player.h = 100; player.powerMode = null; player.powerTime = 0;
+        obstacles = []; pills = []; player.resetPower();
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.style.display = 'none', 500);
+        animate();
+    }
+
+    function animate() {
+        if (!state.active) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.strokeStyle = 'rgba(0, 242, 254, 0.1)'; ctx.lineWidth = 1;
+        for(let i=0; i<canvas.width; i+=50) {
+            ctx.beginPath(); ctx.moveTo(i - (state.frame*2 % 50), groundY); ctx.lineTo(i - (state.frame*2 % 50), canvas.height); ctx.stroke();
+        }
+        ctx.strokeStyle = '#00f2fe'; ctx.lineWidth = 3; ctx.strokeRect(0, groundY, canvas.width, 1);
+
+        updatePlayer(); drawPlayer();
+
+        if (state.frame % 90 === 0) obstacles.push(new Obstacle());
+        if (state.frame > 0 && state.frame % 1000 === 0) pills.push(new Pill());
+
+        obstacles.forEach((obs, i) => {
+            obs.update(); obs.draw();
+            if (player.x < obs.x + obs.w && player.x + player.w > obs.x && player.y < obs.y + obs.h && player.y + player.h > obs.y) {
+                if (player.powerMode !== 'giant') {
+                    state.active = false;
+                    overlay.style.display = 'flex'; setTimeout(() => overlay.style.opacity = '1', 10);
+                    document.getElementById('title').innerText = "Fuck you Giddy";
+                    if (state.score > state.high) { state.high = state.score; localStorage.setItem('jer_ultra_high', state.high); highEl.innerText = state.high; }
+                }
+            }
+            if (obs.x + obs.w < 0) { obstacles.splice(i, 1); state.score += (player.powerMode === 'boost' ? 2 : 1); scoreEl.innerText = state.score; }
+        });
+
+        pills.forEach((p, i) => {
+            p.update(); p.draw();
+            if (player.x < p.x + 30 && player.x + player.w > p.x && player.y < p.y + 30 && player.y + player.h > p.y) {
+                applyPower(p.type); pills.splice(i, 1);
+            }
+        });
+
+        if (state.frame > 0 && state.frame % 1200 === 0) { state.level++; state.baseSpeed += 0.7; if(player.powerMode !== 'slow') state.speed = state.baseSpeed; levelEl.innerText = state.level; }
+
+        state.frame++;
+        requestAnimationFrame(animate);
+    }
+
+    function applyPower(type) {
+        player.powerMode = type; player.powerTime = 300;
+        powerUI.style.display = 'block';
+        if (type === 'giant') { player.w = 110; player.h = 150; powerUI.innerText = "GOD MODE"; powerUI.style.color = "#ff00c1"; powerUI.style.border = "1px solid #ff00c1"; }
+        else if (type === 'slow') { state.speed = 4.5; powerUI.innerText = "TIME WARP"; powerUI.style.color = "#4ade80"; powerUI.style.border = "1px solid #4ade80"; }
+        else { powerUI.innerText = "OVERDRIVE"; powerUI.style.color = "#facc15"; powerUI.style.border = "1px solid #facc15"; }
+    }
+
+    const jump = () => {
+        if (state.active && player.jumps < 2) {
+            player.dy = -16;
+            player.jumps++;
+        } else if (!state.active && overlay.style.opacity === '1') {
+            init();
+        }
+    };
+    window.addEventListener('keydown', (e) => { if (e.code === 'Space') jump(); });
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
+</script><div style="all: initial !important"></div>
+
+</body></html>
