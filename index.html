@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Angelodoku</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="title"><span class="paw">🐾</span>Angelodoku</p>
+    <p class="subtitle">Give every "<A:link>Angel</A:link>o" its own territory — one per row, column and colored region. No two Angels may sit beside each other, not even diagonally.</p>
+  </header>
+
+  <div class="panel">
+    <ul class="rules">
+      <li><span class="dot"></span>1 Ango per row</li>
+      <li><span class="dot"></span>1 Ango per column</li>
+      <li><span class="dot"></span>1 Ango per color</li>
+      <li><span class="dot"></span>no touching, even diagonally</li>
+    </ul>
+
+    <div class="controls">
+      <div class="stat-group">
+        <div class="stat">Time<b id="timer">00:00</b></div>
+        <div class="stat">Photos placed<b id="catCount">0/0</b></div>
+        <div class="stat">Mistakes<b id="mistakeCount">0/3</b></div>
+      </div>
+      <div class="btn-row">
+        <select id="sizeSelect" aria-label="Difficulty">
+          <option value="4" selected>Mini · 4×4</option>
+          <option value="5">Cub · 5×5</option>
+          <option value="6">Easy · 6×6</option>
+          <option value="7">Medium · 7×7</option>
+          <option value="8">Hard · 8×8</option>
+        </select>
+        <button class="primary" id="newGameBtn">New puzzle</button>
+      </div>
+    </div>
+
+    <div class="board-shell">
+      <div id="board" role="grid" aria-label="Angelodoku board"></div>
+    </div>
+
+    <p class="status-bar info" id="statusBar"><span id="statusText">Tap a cell to cycle: empty → ✕ →</span> <img class="status-photo" src="photo_2026-09-17_13-15-01.jpg" alt="photo"></p>
+  </div>
+
+  <footer>Placing a photo auto-marks the cells it rules out. Tap it again to clear the whole hint trail. Reach 3 mistakes and the game ends.</footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
